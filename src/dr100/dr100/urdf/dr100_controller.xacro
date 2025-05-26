@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot name="dr100_controller" xmlns:xacro="http://wiki.ros.org/xacro">
-    <xacro:arg name="gpu" default="false"/>
+    <xacro:arg name="gpu" default="true"/>
     <xacro:property name="gpu" value="$(arg gpu)" />
     <xacro:property name="M_PI" value="3.14159"/>
     

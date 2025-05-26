@@ -36,7 +36,7 @@
         <inertial>
             <mass value="40" />
             <origin xyz="0.0 0.0 0.0" />
-            <inertia ixx="3.791" ixy="-0.012" ixz="0.007" iyy="7.879" iyz="-141.459" izz="9.703" />
+            <inertia ixx="3.791" ixy="-0.012" ixz="0.007" iyy="7.879" iyz="0.023" izz="9.703" />
         </inertial>
     </link>
     <joint name="inertial_joint" type="fixed">

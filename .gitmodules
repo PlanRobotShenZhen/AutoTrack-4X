@@ -1,0 +1,6 @@
+[submodule "src/dr100/rslidar_sdk/src/rs_driver"]
+	path = src/dr100/rslidar_sdk/src/rs_driver
+	url = https://github.com/RoboSense-LiDAR/rs_driver.git
+[submodule "src/dr100/witmotion_ros/witmotion-uart-qt"]
+	path = src/dr100/witmotion_ros/witmotion-uart-qt
+	url = https://github.com/ElettraSciComp/witmotion_IMU_QT.git

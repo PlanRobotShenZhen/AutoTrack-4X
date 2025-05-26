@@ -54,6 +54,8 @@
 
 #include <tf/tf.h>
 
+#include <cmath>
+
 #if GAZEBO_GPU_RAY
 #define RaySensor GpuRaySensor
 #define STR_Gpu  "Gpu"
@@ -303,9 +305,10 @@ void GazeboRosRobosenseLaser::OnScan(ConstLaserScanStampedPtr& _msg)
       double r = _msg->scan().ranges(i + j * rangeCount);
       // Intensity
       double intensity = _msg->scan().intensities(i + j * rangeCount);
-      // Ignore points that lay outside range bands or optionally, beneath a
-      // minimum intensity level.
-      if ((MIN_RANGE >= r) || (r >= MAX_RANGE) || (intensity < MIN_INTENSITY) ) {
+      // 检查是否为NAN点，以及其他范围检查
+      if (std::isnan(r) || std::isnan(intensity) || 
+          (MIN_RANGE >= r) || (r >= MAX_RANGE) || 
+          (intensity < MIN_INTENSITY)) {
         continue;
       }
 
