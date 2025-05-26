@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<robot name="dr100"  xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:arg name="robot_namespace" default="/" /> 
+
+    <!-- Property Encapsulation -->
+    <xacro:property name="M_PI" value="3.14159"/>
+
+    <xacro:property name="base_link_x_size" value="1.128" />
+    <xacro:property name="base_link_y_size" value="0.78937" />
+    <xacro:property name="base_link_z_size" value="0.222" />
+
+    <xacro:property name="wheel_mass" value="3" />
+    <xacro:property name="wheel_length" value="0.14113" />
+    <xacro:property name="wheel_radius" value="0.16416" />
+    <xacro:property name="wheelbase" value="0.672" />
+    <xacro:property name="track" value="0.64824" />
+    <xacro:property name="wheel_vertical_offset" value="0.00432" />
+    
+    <!-- Chassis -->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://dr100/meshes/base_link.STL" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 ${base_link_z_size/2}" rpy="0 0 0" />
+            <geometry>
+                <box size="${base_link_x_size} ${base_link_y_size} ${base_link_z_size}"/>
+            </geometry>
+        </collision>
+    </link>
+    <link name="inertial_link">
+        <inertial>
+            <mass value="40" />
+            <origin xyz="0.0 0.0 0.0" />
+            <inertia ixx="3.791" ixy="-0.012" ixz="0.007" iyy="7.879" iyz="-141.459" izz="9.703" />
+        </inertial>
+    </link>
+    <joint name="inertial_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="inertial_link" />
+    </joint>
+    <!-- <link name="base_footprint"/>
+    <joint name="base_footprint_joint" type="fixed">
+        <origin xyz="0 0 ${wheel_radius-wheel_vertical_offset}" rpy="0 0 0" />
+        <parent link="base_footprint" />
+        <child link="base_link" />
+    </joint> -->
+    
+    <!-- Inertial -->
+    <xacro:include filename="$(find dr100)/urdf/inertial.xacro" />
+
+    <!-- Wheels -->
+    <xacro:include filename="$(find dr100)/urdf/dr100_wheel.xacro" />
+    
+    <!-- IMU -->
+    <xacro:include filename="$(find dr100)/urdf/dr100_imu.xacro" />
+    <xacro:imu sensor_name="imu" parent_link="base_link">
+        <origin xyz="0.25 0 0.5355" rpy="0 0 0"/>
+    </xacro:imu>
+
+    <!-- LiDAR -->
+    <xacro:include filename="$(find dr100)/urdf/dr100_lidar.xacro"/>
+    <xacro:robosense name="robosense" parent_link="base_link">
+        <origin xyz="0.2500 0 0.5725" rpy="0 0 0" />
+    </xacro:robosense>
+</robot>

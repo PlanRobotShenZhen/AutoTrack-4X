@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<robot name="dr100_controller" xmlns:xacro="http://wiki.ros.org/xacro">
+    <xacro:arg name="gpu" default="false"/>
+    <xacro:property name="gpu" value="$(arg gpu)" />
+    <xacro:property name="M_PI" value="3.14159"/>
+    
+
+    <!-- <xacro:macro name="joint_trans" params="joint_name">
+        <transmission name="${joint_name}_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${joint_name}">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${joint_name}_motor">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro>
+    <xacro:joint_trans joint_name="front_left_wheel" />
+    <xacro:joint_trans joint_name="front_right_wheel" />
+    <xacro:joint_trans joint_name="rear_left_wheel" />
+    <xacro:joint_trans joint_name="rear_right_wheel" />
+    <gazebo>
+  		<plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+            <updateRate>100.0</updateRate>
+            <robotNamespace>/</robotNamespace>
+            <leftFrontJoint>front_left_wheel</leftFrontJoint>
+            <rightFrontJoint>front_right_wheel</rightFrontJoint>
+            <leftRearJoint>rear_left_wheel</leftRearJoint>
+            <rightRearJoint>rear_right_wheel</rightRearJoint>
+            <wheelSeparation>${track}</wheelSeparation>
+            <wheelDiameter>${wheel_radius * 2}</wheelDiameter>
+            <robotBaseFrame>base_link</robotBaseFrame>
+            <torque>100</torque>
+            <broadcastTF>false</broadcastTF>
+            <publishOdomTF>false</publishOdomTF>
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+  		</plugin>
+	</gazebo> -->
+    <gazebo>
+        <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+            <commandTopic>cmd_vel</commandTopic>
+            <publishOdomTF>true</publishOdomTF>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <odometryRate>20.0</odometryRate>
+            <robotBaseFrame>base_link</robotBaseFrame>
+        </plugin>
+    </gazebo>
+
+
+    <!-- Gazebo requires the robosense_gazebo_plugins package -->
+    <gazebo reference="robosense">
+        <xacro:if value="${gpu}">
+            <sensor type="gpu_ray" name="robosense-RS16">
+                <pose>0 0 0 0 0 0</pose>
+                <visualize>false</visualize>
+                <update_rate>20</update_rate>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>900</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-${M_PI}</min_angle>
+                            <max_angle>${M_PI}</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>16</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-${15.0*M_PI/180.0}</min_angle>
+                            <max_angle> ${15.0*M_PI/180.0}</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.4</min>
+                        <max>150.0</max>
+                        <resolution>0.001</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.0</stddev>
+                    </noise>
+                </ray>
+                <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_robosense_gpu_laser.so">
+                    <topicName>/rslidar_points</topicName>
+                    <frameName>robosense</frameName>
+                    <min_range>0.4</min_range>
+                    <max_range>150.0</max_range>
+                    <gaussianNoise>0.008</gaussianNoise>
+                </plugin>
+            </sensor>
+        </xacro:if>
+        <xacro:unless value="${gpu}">
+            <sensor type="ray" name="robosense-RS16">
+                <pose>0 0 0 0 0 0</pose>
+                <visualize>false</visualize>
+                <update_rate>20</update_rate>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>900</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-${M_PI}</min_angle>
+                            <max_angle>${M_PI}</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>16</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-${15.0*M_PI/180.0}</min_angle>
+                            <max_angle> ${15.0*M_PI/180.0}</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.4</min>
+                        <max>151.0</max>
+                        <resolution>0.001</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.0</stddev>
+                    </noise>
+                </ray>
+                <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_robosense_laser.so">
+                    <topicName>/rslidar_points</topicName>
+                    <frameName>robosense</frameName>
+                    <min_range>0.4</min_range>
+                    <max_range>151.0</max_range>
+                    <gaussianNoise>0.008</gaussianNoise>
+                </plugin>
+            </sensor>
+        </xacro:unless>
+    </gazebo>
+</robot>

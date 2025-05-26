@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<robot name="dr100" xmlns:xacro="http://ros.org/wiki/xacro">
+    <!-- DR100 Model -->
+    <xacro:include filename="$(find dr100)/urdf/dr100.xacro" />
+
+    <!-- Control Module -->
+    <xacro:include filename="$(find dr100)/urdf/dr100_controller.xacro" />
+</robot>

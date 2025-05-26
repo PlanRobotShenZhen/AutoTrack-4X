@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="robosense" params="name:=robosense parent_link:=base_link *origin">
+        <joint name="${name}_base_mount_joint" type="fixed">
+            <xacro:insert_block name="origin" />
+            <parent link="${parent_link}"/>
+            <child link="${name}_base_link"/>
+        </joint>
+        <link name="${name}_base_link">
+            <inertial>
+                <mass value="0.87"/>
+                <origin xyz="0 0 0"/>
+                <inertia ixx="0.001094695" ixy="0" ixz="0"
+            iyy="0.001094695" iyz="0"
+            izz="0.001245079"/>
+            </inertial>
+            <visual>
+                <origin rpy="-1.5707 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://dr100/meshes/robosense_16.dae" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
+                <geometry>
+                    <cylinder radius="0.0535" length="0.0817"/>
+                </geometry>
+            </collision>
+        </link>
+        <joint name="_base_scan_joint" type="fixed" >
+            <origin xyz="0 0 0.039" rpy="0 0 0" />
+            <parent link="${name}_base_link" />
+            <child link="${name}"/>
+        </joint>
+        <link name="${name}">
+            <inertial>
+                <mass value="0.01"/>
+                <origin xyz="0 0 0"/>
+                <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+            </inertial>
+        </link>
+    </xacro:macro>
+</robot>
