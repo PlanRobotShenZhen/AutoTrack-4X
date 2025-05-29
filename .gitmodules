@@ -4,3 +4,12 @@
 [submodule "src/dr100/witmotion_ros/witmotion-uart-qt"]
 	path = src/dr100/witmotion_ros/witmotion-uart-qt
 	url = https://github.com/ElettraSciComp/witmotion_IMU_QT.git
+[submodule "src/nav_stack/hdl/fast_gicp/thirdparty/Sophus"]
+	path = src/nav_stack/hdl/fast_gicp/thirdparty/Sophus
+	url = https://github.com/strasdat/Sophus.git
+[submodule "src/nav_stack/hdl/fast_gicp/thirdparty/Eigen"]
+	path = src/nav_stack/hdl/fast_gicp/thirdparty/Eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "src/nav_stack/hdl/fast_gicp/thirdparty/nvbio"]
+	path = src/nav_stack/hdl/fast_gicp/thirdparty/nvbio
+	url = https://github.com/NVlabs/nvbio.git
