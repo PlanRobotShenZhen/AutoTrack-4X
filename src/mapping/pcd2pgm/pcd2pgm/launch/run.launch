@@ -1,24 +1,57 @@
-<!-- -->
+<!-- 
+直通滤波器：按高度范围（thre_z_min ~ thre_z_max）过滤点云。
+    参数：
+        thre_z_min=0.1（最低高度）
+        thre_z_max=10（最高高度）
+        flag_pass_through=0（0=保留范围内，1=保留范围外）
+    效果：去除地面/天花板，保留目标高度层。
+2.半径滤波器：剔除半径（thre_radius）内邻近点少于thres_point_count的孤立点。
+    参数：
+        thre_radius=1（搜索半径，单位：米）
+        thres_point_count=3（最小邻近点数）
+    效果：去除离散噪声，但可能误删稀疏点云。（当前未启用）
+3.统计学滤波器：基于邻近点平均距离剔除异常值。
+    参数：
+        MeanK=100（计算平均距离的邻近点数）
+        StddevMulThresh=1.0（标准差乘数阈值）
+    效果：有效去噪，适合复杂场景，但计算量较大。
+-->
+
 <launch>
-<node pkg="pcd2pgm" name="pcd2pgm" type="pcd2pgm" output="screen">
-<!-- 存放pcd文件的路径-->
-<param name="file_directory" value= "/home/robot/map/" />
-<!-- pcd文件名称-->
-<param name="file_name" value= "map" />
-<!-- 选取的范围　最小的高度-->
-<param name="thre_z_min" value= "0.1" />
-<!-- 选取的范围　最大的高度-->
-<param name="thre_z_max" value= "1.5" />
-<!--0 选取高度范围内的，１选取高度范围外的-->
-<param name="flag_pass_through" value= "0" />
-<!-- 半径滤波的半径-->
-<param name="thre_radius" value= "0.5" />
-<!-- 半径滤波的要求点数个数-->
-<param name="thres_point_count" value= "10" />
-<!-- 存储的栅格map的分辨率-->
-<param name="map_resolution" value= "0.05" />
-<!-- 转换后发布的二维地图的topic，默认使用map即可，可使用map_server保存-->
-<param name="map_topic_name" value= "map" />
-</node>
+    <node pkg="pcd2pgm" name="pcd2pgm" type="pcd2pgm" output="screen">
+        <!-- 存放pcd文件的路径-->
+        <param name="file_directory" value= "$(find pcd2pgm)/pcd_map/" />
+        <!-- pcd文件名称-->
+        <param name="file_name" value= "finalCloud" />
+
+        <!-- 选取的范围　最小的高度-->
+        <param name="thre_z_min" value= "-0.4" />
+        <!-- 选取的范围　最大的高度-->
+        <param name="thre_z_max" value= "10.0" />
+        <!--0 选取高度范围内的，１选取高度范围外的-->
+        <param name="flag_pass_through" value= "0" />
+
+        <!-- 半径滤波, 搜索半径内至少应该有多少个邻近点 -->
+        <!-- 半径滤波的半径-->
+        <param name="thre_radius" value= "1" />
+        <!-- 半径滤波的要求点数个数-->
+        <param name="thres_point_count" value= "3" />
+
+        <!-- 统计学滤波-->
+        <!-- 统计学滤波的半径-->
+        <param name="MeanK" value= "100" />
+        <!-- 统计学滤波的要求点数个数-->
+        <param name="StddevMulThresh" value= "1.0" />
+
+        <!-- 存储的栅格map的分辨率-->
+        <param name="map_resolution" value= "0.05" />
+        <!-- 转换后发布的二维地图的topic，默认使用map即可，可使用map_server保存-->
+        <param name="map_topic_name" value= "map" />
+
+        <!-- 滤波器开关参数 -->
+        <param name="use_passthrough_filter" value= "true" />  <!-- 直通滤波, 根据高度范围过滤 -->
+        <param name="use_radius_filter" value= "false" />    <!-- 半径滤波, 根据半径过滤 -->
+        <param name="use_statistical_filter" value= "false" /> <!-- 统计学滤波, 删除异常孤立点 -->
+    </node>
 
 </launch>

@@ -29,27 +29,49 @@ double thre_z_max = 2.0;
 int flag_pass_through = 0;
 double map_resolution = 0.05;
 double thre_radius = 0.1;
+
 //半径滤波的点数阈值
 int thres_point_count = 10;
+int MeanK=50;
+double StddevMulThresh=1.0;
 
+//体素滤波后数据指针
+pcl::PointCloud<pcl::PointXYZ>::Ptr
+    cloud_after_VoxelGrid(new pcl::PointCloud<pcl::PointXYZ>);
 //直通滤波后数据指针
 pcl::PointCloud<pcl::PointXYZ>::Ptr
     cloud_after_PassThrough(new pcl::PointCloud<pcl::PointXYZ>);
 //半径滤波后数据指针
 pcl::PointCloud<pcl::PointXYZ>::Ptr
     cloud_after_Radius(new pcl::PointCloud<pcl::PointXYZ>);
+//统计学滤波后数据指针
+pcl::PointCloud<pcl::PointXYZ>::Ptr
+    cloud_after_Statistical(new pcl::PointCloud<pcl::PointXYZ>);
+//原始点云数据指针    
 pcl::PointCloud<pcl::PointXYZ>::Ptr
     pcd_cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
+//体素滤波
+void VoxelGridFilter(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pcd_cloud);
 //直通滤波
 void PassThroughFilter(const double &thre_low, const double &thre_high,
                        const bool &flag_in);
 //半径滤波
-void RadiusOutlierFilter(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pcd_cloud,
+void RadiusOutlierFilter(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pcd_cloud0,
                          const double &radius, const int &thre_count);
+//添加内容******************************************                         
+//StatisticalOutlireRemoval滤波
+void StatisticalOutlierFilter(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pcd_cloud1,
+                         const double &MeanK, const int &StdMulthresh);
+//**************************************************
 //转换为栅格地图数据并发布
 void SetMapTopicMsg(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
                     nav_msgs::OccupancyGrid &msg);
+
+// 添加滤波器开关变量
+bool use_passthrough_filter = true;
+bool use_radius_filter = true;
+bool use_statistical_filter = true;
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "pcl_filters");
@@ -72,6 +94,11 @@ int main(int argc, char **argv) {
   private_nh.param("thres_point_count", thres_point_count, 10);
   private_nh.param("map_topic_name", map_topic_name, std::string("map"));
 
+  // 添加滤波器开关参数
+  private_nh.param("use_passthrough_filter", use_passthrough_filter, true);
+  private_nh.param("use_radius_filter", use_radius_filter, true);
+  private_nh.param("use_statistical_filter", use_statistical_filter, true);
+
   ros::Publisher map_topic_pub =
       nh.advertise<nav_msgs::OccupancyGrid>(map_topic_name, 1);
 
@@ -82,13 +109,28 @@ int main(int argc, char **argv) {
   }
 
   std::cout << "初始点云数据点数：" << pcd_cloud->points.size() << std::endl;
-  //对数据进行直通滤波
-  PassThroughFilter(thre_z_min, thre_z_max, bool(flag_pass_through));
-  //对数据进行半径滤波
-  RadiusOutlierFilter(cloud_after_PassThrough, thre_radius, thres_point_count);
-  //转换为栅格地图数据并发布
-  SetMapTopicMsg(cloud_after_Radius, map_topic_msg);
-  // SetMapTopicMsg(cloud_after_PassThrough, map_topic_msg);
+
+  // 根据开关参数决定使用哪些滤波器
+  pcl::PointCloud<pcl::PointXYZ>::Ptr processed_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+  *processed_cloud = *pcd_cloud;
+
+  if (use_passthrough_filter) {
+    PassThroughFilter(thre_z_min, thre_z_max, bool(flag_pass_through));
+    *processed_cloud = *cloud_after_PassThrough;
+  }
+
+  if (use_radius_filter) {
+    RadiusOutlierFilter(processed_cloud, thre_radius, thres_point_count);
+    *processed_cloud = *cloud_after_Radius;
+  }
+
+  if (use_statistical_filter) {
+    StatisticalOutlierFilter(processed_cloud, MeanK, StddevMulThresh);
+    *processed_cloud = *cloud_after_Statistical;
+  }
+
+  // 使用最终处理后的点云生成地图
+  SetMapTopicMsg(processed_cloud, map_topic_msg);
 
   while (ros::ok()) {
     map_topic_pub.publish(map_topic_msg);
@@ -99,6 +141,14 @@ int main(int argc, char **argv) {
   }
 
   return 0;
+}
+
+//体素滤波器实现下采样
+void VoxelGridFilter(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pcd_cloud){
+  pcl::VoxelGrid<pcl::PointXYZ> vox;
+  vox.setInputCloud(pcd_cloud);
+  vox.setLeafSize(0.01f, 0.01f, 0.01f);
+  vox.filter(*cloud_after_VoxelGrid);
 }
 
 //直通滤波器对点云进行过滤，获取设定高度范围内的数据
@@ -139,6 +189,25 @@ void RadiusOutlierFilter(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pcd_cloud0,
   pcl::io::savePCDFile<pcl::PointXYZ>(file_directory + "map_radius_filter.pcd",
                                       *cloud_after_Radius);
   std::cout << "半径滤波后点云数据点数：" << cloud_after_Radius->points.size()
+            << std::endl;
+}
+
+//StatisticalOutlierRemoval滤波
+void StatisticalOutlierFilter(const pcl::PointCloud<pcl::PointXYZ>::Ptr &pcd_cloud1,
+                         const double &MeanK, const int &StdMulthresh){
+  //创建滤波器
+  pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+  //设置输入点云
+  sor.setInputCloud(pcd_cloud1);
+  //设置半径,在该范围内找临近点
+  sor.setMeanK(MeanK);
+  //设置查询点的邻域点集数，小于该阈值的删除
+  sor.setStddevMulThresh(StdMulthresh);
+  sor.filter(*cloud_after_Statistical);
+  // test 保存滤波后的点云到文件
+  pcl::io::savePCDFile<pcl::PointXYZ>(file_directory + "map_Statistical_filter.pcd",
+                                      *cloud_after_Statistical);
+  std::cout << "Statistical滤波后点云数据点数：" << cloud_after_Statistical->points.size()
             << std::endl;
 }
 
@@ -186,7 +255,7 @@ void SetMapTopicMsg(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
     if (y > y_max)
       y_max = y;
   }
-  // origin的确定
+  // 原点的确定，左下角
   msg.info.origin.position.x = x_min;
   msg.info.origin.position.y = y_min;
   msg.info.origin.position.z = 0.0;
@@ -201,7 +270,7 @@ void SetMapTopicMsg(const pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
   msg.data.resize(msg.info.width * msg.info.height);
   msg.data.assign(msg.info.width * msg.info.height, 0);
 
-  ROS_INFO("data size = %d\n", msg.data.size());
+  ROS_INFO("data size = %zu\n", msg.data.size());
 
   for (int iter = 0; iter < cloud->points.size(); iter++) {
     int i = int((cloud->points[iter].x - x_min) / map_resolution);

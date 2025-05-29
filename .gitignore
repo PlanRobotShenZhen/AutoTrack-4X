@@ -19,3 +19,7 @@ ceres-solver/
 
 .env
 mailmap.txt
+
+maps/LeGO-LOAM/
+maps/LIO-SAM/
+**/pcd2pgm/pcd2pgm/pcd_map/

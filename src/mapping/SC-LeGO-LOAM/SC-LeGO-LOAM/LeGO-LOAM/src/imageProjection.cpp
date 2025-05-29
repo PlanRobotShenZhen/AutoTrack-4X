@@ -76,11 +76,11 @@ private:
 
     std::vector<std::pair<int8_t, int8_t> > neighborIterator; // neighbor iterator for segmentaiton process
 
-    uint16_t *allPushedIndX; // array for tracking points of a segmented object
-    uint16_t *allPushedIndY;
+    std::uint16_t *allPushedIndX; // array for tracking points of a segmented object
+    std::uint16_t *allPushedIndY;
 
-    uint16_t *queueIndX; // array for breadth-first search process of segmentation, for speed
-    uint16_t *queueIndY;
+    std::uint16_t *queueIndX; // array for breadth-first search process of segmentation, for speed
+    std::uint16_t *queueIndY;
 
 public:
     ImageProjection():
@@ -135,11 +135,11 @@ public:
         neighbor.first =  0; neighbor.second = -1; neighborIterator.push_back(neighbor);
         neighbor.first =  1; neighbor.second =  0; neighborIterator.push_back(neighbor);
 
-        allPushedIndX = new uint16_t[N_SCAN*Horizon_SCAN];
-        allPushedIndY = new uint16_t[N_SCAN*Horizon_SCAN];
+        allPushedIndX = new std::uint16_t[N_SCAN*Horizon_SCAN];
+        allPushedIndY = new std::uint16_t[N_SCAN*Horizon_SCAN];
 
-        queueIndX = new uint16_t[N_SCAN*Horizon_SCAN];
-        queueIndY = new uint16_t[N_SCAN*Horizon_SCAN];
+        queueIndX = new std::uint16_t[N_SCAN*Horizon_SCAN];
+        queueIndY = new std::uint16_t[N_SCAN*Horizon_SCAN];
     }
 
     void resetParameters(){

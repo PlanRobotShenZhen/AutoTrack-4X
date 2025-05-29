@@ -1,6 +1,6 @@
 <launch>
     <!--- Sim Time -->
-    <!-- <param name="/use_sim_time" value="true" /> -->
+    <param name="/use_sim_time" value="true" />
 
     <arg name = "model_xacro" default = "$(find dr100)/urdf/dr100.gazebo.xacro" />
     <param name="robot_description" command="$(find xacro)/xacro $(arg model_xacro)" />
@@ -11,7 +11,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch"> 
-        <arg name="world_name" value="$(find dr100)/worlds/demo.world" /> 
+        <arg name="world_name" value="$(find dr100)/worlds/nano_demo.world" /> 
     </include>
     <node pkg="gazebo_ros" type="spawn_model" name="model" args="-urdf -model dr100 -param robot_description"  />  
 </launch>
