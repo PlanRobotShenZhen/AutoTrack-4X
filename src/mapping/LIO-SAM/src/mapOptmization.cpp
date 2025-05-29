@@ -358,11 +358,22 @@ public:
 
       cout << "****************************************************" << endl;
       cout << "Saving map to pcd files ..." << endl;
-      if(req.destination.empty()) saveMapDirectory = std::getenv("HOME") + savePCDDirectory;
-      else saveMapDirectory = std::getenv("HOME") + req.destination;
+      
+      // 获取当前时间
+      time_t now = time(0);
+      tm *ltm = localtime(&now);
+      char timestamp[80];
+      strftime(timestamp, 80, "%Y%m%d_%H%M%S", ltm);
+      
+      if(req.destination.empty()) {
+          saveMapDirectory = std::string(std::getenv("HOME")) + savePCDDirectory + "/" + timestamp;
+      } else {
+          saveMapDirectory = std::string(std::getenv("HOME")) + req.destination + "/" + timestamp;
+      }
+      
       cout << "Save destination: " << saveMapDirectory << endl;
       // create directory and remove old files;
-      int unused = system((std::string("exec rm -r ") + saveMapDirectory).c_str());
+      [[maybe_unused]] int unused = system((std::string("exec rm -r ") + saveMapDirectory).c_str());
       unused = system((std::string("mkdir -p ") + saveMapDirectory).c_str());
       // save key frame transformations
       pcl::io::savePCDFileBinary(saveMapDirectory + "/trajectory.pcd", *cloudKeyPoses3D);
