@@ -1,0 +1,14 @@
+<!-- 将PCD点云/八叉树地图转换为栅格地图 -->
+<launch>
+    <rosparam command="load" file="$(find bot_navigation)/param/3d/octomap_to_gridmap.yaml" />
+    <arg name="btfile" default="$(find bot_navigation)/map/3d/lego/finalCloud.bt" />
+    
+    <!-- Load the octomap -->
+    <node pkg="octomap_server" type="octomap_server_static" name="octomap_server" args="$(arg btfile)" output="screen"/>
+    <!-- Launch the octomap conversion node -->
+    <node pkg="grid_map_demos" type="octomap_to_gridmap_demo" name="octomap_to_gridmap_demo" output="screen" />
+    <!-- Launch the grid map visualizer -->
+    <node pkg="grid_map_visualization" type="grid_map_visualization" name="grid_map_visualization" output="screen" >
+        <remap from="/grid_map_visualization/elevation_grid" to="/map" />
+    </node>
+</launch>

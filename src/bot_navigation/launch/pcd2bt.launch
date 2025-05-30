@@ -1,0 +1,37 @@
+<launch>
+    <!-- 1. 参数定义 -->
+    <!-- PCD 文件路径 -->
+    <arg name="pcdfile" default="$(find bot_navigation)/map/3d/lego/finalCloud.pcd" />
+    <!-- 发布间隔（秒），0 表示只发一次 -->
+    <arg name="interval" default="1.0" />
+  
+    <!-- 2. 将 PCD 转为 PointCloud2 并发布 -->
+    <node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" output="screen"
+          args="$(arg pcdfile) $(arg interval)" >
+      <!-- 设置发布消息的坐标系 -->
+      <param name="frame_id" value="map" />
+      <!-- remap 默认话题 cloud_pcd 为我们自定义的 /pointcloud_in -->
+      <remap from="cloud_pcd" to="/velodyne_points" />
+    </node>
+  
+    <!-- 3. 动态 OctoMap Server：订阅 /pointcloud_in 构建 OctoMap -->
+    <node pkg="octomap_server" type="octomap_server_node" name="octomap_server" output="screen">
+      <!-- octomap_server 订阅的默认话题是 cloud_in，需要 remap 到我们发布的 /pointcloud_in -->
+      <remap from="cloud_in" to="/velodyne_points" />
+      <!-- 保持同一坐标系 -->
+      <param name="frame_id" value="map" />
+      <!-- 可根据需要调整传感器模型、分辨率等参数 -->
+    </node>
+  
+    <!-- 4. 格网地图转换及可视化（保持不变） -->
+    <rosparam command="load" file="$(find bot_navigation)/param/3d/octomap_to_gridmap.yaml" />
+  
+    <node pkg="grid_map_demos" type="octomap_to_gridmap_demo"
+          name="octomap_to_gridmap_demo" output="screen" />
+  
+    <node pkg="grid_map_visualization" type="grid_map_visualization"
+          name="grid_map_visualization" output="screen">
+      <remap from="/grid_map_visualization/elevation_grid" to="/map" />
+    </node>
+  </launch>
+  

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- params -->
+  <arg name="slam_type" default="3D-SLAM" />
+  <arg name="tf_prefix" default="" />
+  <arg name="map_type" default="lio" />
+
+  <!-- TF转换超时参数 -->
+  <param name="/tf_timeout" value="1.0" />
+  <param name="/tf_prefix" value="$(arg tf_prefix)" />
+
+  <!-- 3D navigation -->
+  <group if="$(eval map_type == 'lego')">
+    <include file="$(find bot_navigation)/launch/include/3d/localization.launch" >
+      <arg name="map_type" value="lego" />
+      <arg name="point_cloud_file" value="$(find bot_navigation)/map/3d/lego/finalCloud.pcd" />
+    </include>
+    <include file="$(find bot_navigation)/launch/include/3d/bot_3d_navigation.launch" >
+      <arg name="map_file" value="$(find bot_navigation)/map/3d/lego/finalCloud.yaml" />
+    </include>
+  </group>
+
+  <group if="$(eval map_type == 'lio')">
+    <include file="$(find bot_navigation)/launch/include/3d/localization.launch" >
+      <arg name="map_type" value="lio" />
+      <arg name="point_cloud_file" value="$(find bot_navigation)/map/3d/lio/GlobalMap.pcd" />
+    </include>
+    <include file="$(find bot_navigation)/launch/include/3d/bot_3d_navigation.launch" >
+      <arg name="map_file" value="$(find bot_navigation)/map/3d/lio/GlobalMap.yaml" />
+    </include>
+  </group>
+
+</launch>

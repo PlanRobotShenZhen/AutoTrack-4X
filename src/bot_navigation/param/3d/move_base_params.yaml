@@ -1,0 +1,24 @@
+# 规划器配置
+base_global_planner: "global_planner/GlobalPlanner"    # 全局规划器类型
+base_local_planner: "teb_local_planner/TebLocalPlannerROS"  # 局部规划器类型
+
+# 恢复行为配置
+recovery_behaviors:
+  - name: 'conservative_reset'                         # 保守重置
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+  - name: 'aggressive_reset'                          # 激进重置
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+
+# 规划器容差
+planner_frequency: 1.0            # 全局规划器执行频率(Hz)
+planner_patience: 5.0             # 规划器等待规划的最长时间(秒)
+oscillation_timeout: 10.0         # 振荡超时时间(秒)
+oscillation_distance: 0.2         # 判定为振荡的最小距离(米)
+
+# 控制器容差
+controller_frequency: 5.0         # 局部规划器执行频率(Hz)
+controller_patience: 5.0          # 控制器等待有效控制的最长时间(秒)
+
+# TF超时参数
+transform_tolerance: 1.0
+clearing_rotation_allowed: true

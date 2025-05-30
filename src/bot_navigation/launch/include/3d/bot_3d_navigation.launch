@@ -1,0 +1,25 @@
+<launch>
+    <!-- params -->
+    <arg name="map_type" default="lio" />
+    <arg name="map_file" default="$(find bot_navigation)/map/3d/lio/GlobalMap.yaml" />
+    
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+    <!-- 3D点云转scan 2D点云 -->
+    <include file="$(find bot_navigation)/launch/include/3d/point_to_scan.launch"/>
+
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen" if="true">
+        
+        <rosparam file="$(find bot_navigation)/param/3d/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find bot_navigation)/param/3d/costmap_common_params.yaml" command="load" ns="local_costmap" />   
+        <rosparam file="$(find bot_navigation)/param/3d/local_costmap_params.yaml" command="load" />   
+        <rosparam file="$(find bot_navigation)/param/3d/global_costmap_params.yaml" command="load" />
+        <!--rosparam file="$(find bot_navigation)/param/3d/dwa_local_planner_params.yaml" command="load" /-->
+        <rosparam file="$(find bot_navigation)/param/3d/teb_local_planner_params.yaml" command="load" />
+        <rosparam file="$(find bot_navigation)/param/3d/move_base_params.yaml" command="load" />
+        <rosparam file="$(find bot_navigation)/param/3d/global_planner_params.yaml" command="load" />
+        <!-- <rosparam file="$(find bot_navigation)/param/3d/navfn_global_planner_params.yaml" command="load" /> -->
+
+        <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    </node>
+</launch>

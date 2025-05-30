@@ -7,7 +7,7 @@ common:
   send_point_cloud_ros: true            # true: Send point cloud through ROS or ROS2
 lidar:
   - driver:
-      lidar_type: RSM1             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
+      lidar_type: RS16             #  LiDAR type - RS16, RS32, RSBP, RSAIRY, RSHELIOS, RSHELIOS_16P, RS128, RS80, RS48, RSP128, RSP80, RSP48, 
                                    #               RSM1, RSM1_JUMBO, RSM2, RSM3, RSE1, RSMX.
                                    
       msop_port: 6699              #  Msop port of lidar
@@ -19,10 +19,10 @@ lidar:
 
 
       min_distance: 0.2            #  Minimum distance of point cloud
-      max_distance: 200            #  Maximum distance of point cloud
+      max_distance: 100            #  Maximum distance of point cloud
       use_lidar_clock: true        #  true--Use the lidar clock as the message timestamp
                                    #  false-- Use the system clock as the timestamp
-      dense_points: false          #  true: discard NAN points; false: reserve NAN points
+      dense_points: true          #  true: discard NAN points; false: reserve NAN points
       
       ts_first_point: true         #  true: time-stamp point cloud with the first point; false: with the last point;   
                                    #  these parameters are used from mechanical lidar
@@ -33,7 +33,7 @@ lidar:
                                    #  When msg_source is 3, the following parameters will be used
       pcap_repeat: true            #  true: The pcap bag will repeat play   
       pcap_rate: 1.0               #  Rate to read the pcap file
-      pcap_path: /home/robosense/lidar.pcap #The path of pcap file
+      pcap_path: /home/plan/lidar.pcap #The path of pcap file
 
     ros:
       ros_frame_id: rslidar                           #Frame id of packet message and point cloud message
