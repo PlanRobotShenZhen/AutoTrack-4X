@@ -10,7 +10,7 @@ GlobalPlanner:
   allow_unknown: true                    # 是否允许规划器穿过未知区域(需配合costmap的track_unknown_space: true使用)，默认为true  
   planner_window_x: 0.0                  # 规划时考虑地图的X方向窗口大小(0表示全地图)，默认为0.0  
   planner_window_y: 0.0                  # 规划时考虑地图的Y方向窗口大小(0表示全地图)，默认为0.0  
-  default_tolerance: 0.1                 # 若目标点位于障碍物内，规划到其周围该半径内的最近可行点(单位：米)，默认为0.0(必须完全到达目标)
+  default_tolerance: 0.3                 # 若目标点位于障碍物内，规划到其周围该半径内的最近可行点(单位：米)，默认为0.0(必须完全到达目标)
 
   # 代价与势场参数
   lethal_cost: 253                        # 致命障碍物代价阈值(超过此值的栅格视为不可通行)，默认为253 

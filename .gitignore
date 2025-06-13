@@ -22,4 +22,9 @@ mailmap.txt
 
 maps/LeGO-LOAM/
 maps/LIO-SAM/
+maps/pcd_map/
 **/pcd2pgm/pcd2pgm/pcd_map/
+
+Ros_Qt5_Gui_App/build/
+tools/ros_rqt_gui/*.log
+

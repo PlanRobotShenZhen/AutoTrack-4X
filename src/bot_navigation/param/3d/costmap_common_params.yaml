@@ -6,11 +6,11 @@ footprint: [[-0.564, -0.39469], [-0.564, 0.39469], [0.564, 0.39469], [0.564, -0.
 # 障碍物层配置
 obstacle_layer:
   enabled: true                               # 是否启用障碍物层
-  track_unknown_space: true                   # 是否跟踪未知空间, 如果设置为true, 地图上代价值分为致命碰撞, 自由区域和未知区域三种
+  track_unknown_space: false                   # 是否跟踪未知空间, 如果设置为true, 地图上代价值分为致命碰撞, 自由区域和未知区域三种
   max_obstacle_height: 100.0                  # 最大障碍物高度  
   min_obstacle_height: 0.0                    # 最小障碍物高度
-  obstacle_range: 3.0                         # 机器人检测障碍物的最大范围(米). 超过该范围的障碍物, 并不进行检测, 只有靠近到该范围内才把该障碍物当作影响路径规划和移动的障碍物
-  raytrace_range: 2.5                         # 机器人清除障碍物的最大范围(米). 实时清除代价地图中已消失障碍物的最大检测范围, 例如设为3米时, 若3米内原有障碍物消失, 则将该区域标记为可通行空间
+  obstacle_range: 2.0                         # 机器人检测障碍物的最大范围(米). 超过该范围的障碍物, 并不进行检测, 只有靠近到该范围内才把该障碍物当作影响路径规划和移动的障碍物
+  raytrace_range: 1.5                         # 机器人清除障碍物的最大范围(米). 实时清除代价地图中已消失障碍物的最大检测范围, 例如设为3米时, 若3米内原有障碍物消失, 则将该区域标记为可通行空间
   observation_sources: scan_sensor            # 观测来源名称
   # 激光雷达传感器配置(由rslidar_points转换的LaserScan)
   scan_sensor:
@@ -25,8 +25,8 @@ obstacle_layer:
 # 膨胀层配置
 inflation_layer:
   enabled: true                             # 是否启用膨胀层
-  cost_scaling_factor: 5                    # 代价比例因子(代价衰减因子)：越大则代价随距离增加衰减越快(default: 10)
-  inflation_radius: 0.3                     # 膨胀半径(米)：机器人与障碍物之间的最小距离, 一般将该值设置为机器人底盘的直径大小
+  cost_scaling_factor: 10                    # 代价比例因子(代价衰减因子)：越大则代价随距离增加衰减越快(default: 10)
+  inflation_radius: 0.6                     # 膨胀半径(米)：机器人与障碍物之间的最小距离, 一般将该值设置为机器人底盘的直径大小
 
 # 静态地图层配置
 static_layer:

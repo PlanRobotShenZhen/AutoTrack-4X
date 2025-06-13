@@ -11,30 +11,30 @@ TebLocalPlannerROS:
   dt_ref: 0.3                    # 轨迹时间分辨率参考值(秒)
   dt_hysteresis: 0.1             # 轨迹时间分辨率滞后值，用于自动调整大小
   global_plan_overwrite_orientation: True  # 是否覆盖全局规划器提供的局部子目标的方向
-  max_global_plan_lookahead_dist: 3.0     # 考虑优化的全局计划子集的最大长度(米)
-  feasibility_check_no_poses: 5           # 每个采样间隔内检查可行性的姿态数量
+  max_global_plan_lookahead_dist: 2.0     # 考虑优化的全局计划子集的最大长度(米)
+  feasibility_check_no_poses: 3           # 每个采样间隔内检查可行性的姿态数量
 
   # Robot（机器人运动参数）
-  max_vel_x: 0.8                 # 最大前向速度(米/秒)
+  max_vel_x: 0.03                 # 最大前向速度(米/秒)
   max_vel_y: 0.0                 # 最大横向速度，非全向移动机器人设为0
-  max_vel_x_backwards: 0.3       # 最大后退速度(米/秒)
-  max_vel_theta: 0.5             # 最大角速度(弧度/秒)
-  acc_lim_x: 0.3                 # 最大前向加速度(米/秒^2)
+  max_vel_x_backwards: 0.01       # 最大后退速度(米/秒)
+  max_vel_theta: 0.05             # 最大角速度(弧度/秒)
+  acc_lim_x: 0.005                 # 最大前向加速度(米/秒^2)
   acc_lim_y: 0.0                 # 最大横向加速度，非全向移动机器人设为0
-  acc_lim_theta: 0.3             # 最大角加速度(弧度/秒^2)
+  acc_lim_theta: 0.005             # 最大角加速度(弧度/秒^2)
   min_turning_radius: 0.0        # 最小转弯半径，0表示可原地旋转
   wheelbase: 0.648               # 轴距，前后轮轴之间的距离(米)
   cmd_angle_instead_rotvel: false # 是否使用转向角代替旋转速度
 
   # GoalTolerance（目标容差参数）
-  xy_goal_tolerance: 0.2         # 到达目标位置的欧氏距离容差(米)
+  xy_goal_tolerance: 0.3         # 到达目标位置的欧氏距离容差(米)
   yaw_goal_tolerance: 0.1        # 到达目标姿态的角度容差(弧度)
   free_goal_vel: False           # 是否允许机器人以最大速度到达目标点
 
   # Obstacles（障碍物相关参数）
-  min_obstacle_dist: 0.1                      # 与障碍物的最小距离(米)
+  min_obstacle_dist: 0.15                      # 与障碍物的最小距离(米)
   include_costmap_obstacles: True             # 是否考虑代价地图中的障碍物
-  costmap_obstacles_behind_robot_dist: 0.5    # 考虑机器人后方多远的障碍物(米)
+  costmap_obstacles_behind_robot_dist: 1    # 考虑机器人后方多远的障碍物(米)
   obstacle_poses_affected: 30                 # 每个障碍物影响的轨迹姿态数量
   costmap_converter_plugin: ""                # 代价地图转换插件名称
   costmap_converter_spin_thread: True         # 是否在单独线程中运行代价地图转换
@@ -45,7 +45,7 @@ TebLocalPlannerROS:
   no_outer_iterations: 4                      # 外循环迭代次数
   optimization_activate: True                 # 是否启用优化
   optimization_verbose: False                 # 是否输出优化详细信息
-  penalty_epsilon: 0.1                       # 硬约束近似的安全裕度
+  penalty_epsilon: 0.004                       # 硬约束近似的安全裕度
   weight_max_vel_x: 2                        # 满足最大允许速度的优化权重
   weight_max_vel_theta: 1                    # 满足最大角速度的优化权重
   weight_acc_lim_x: 1                        # 满足加速度限制的优化权重
@@ -56,12 +56,12 @@ TebLocalPlannerROS:
   weight_optimaltime: 1                      # 优化轨迹执行时间的权重
   weight_obstacle: 50                        # 保持与障碍物最小距离的优化权重
   weight_dynamic_obstacle: 10                # 动态障碍物的优化权重
-  alternative_time_cost: False               # 是否使用替代时间开销计算方法
+  selection_alternative_time_cost: False     # 是否使用替代时间开销计算方法
 
   # Homotopy Class Planner（同伦类规划器参数）
   enable_homotopy_class_planning: False      # 是否启用并行规划
   enable_multithreading: True                # 是否启用多线程
-  simple_exploration: False                  # 是否使用简单探索策略
+  simple_exploration: True                  # 是否使用简单探索策略
   max_number_classes: 4                      # 考虑的最大轨迹类别数量
   roadmap_graph_no_samples: 15              # 路线图采样点数量
   roadmap_graph_area_width: 5               # 路线图采样区域宽度(米)

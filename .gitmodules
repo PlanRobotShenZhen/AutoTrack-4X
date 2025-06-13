@@ -13,3 +13,6 @@
 [submodule "src/nav_stack/hdl/fast_gicp/thirdparty/nvbio"]
 	path = src/nav_stack/hdl/fast_gicp/thirdparty/nvbio
 	url = https://github.com/NVlabs/nvbio.git
+[submodule "src/dr100/dr100_chassis_driver"]
+	path = src/dr100/dr100_chassis_driver
+	url = https://github.com/PlanRobotShenZhen/dr100_chassis_driver.git

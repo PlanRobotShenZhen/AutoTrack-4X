@@ -60,12 +60,12 @@
     <!-- IMU -->
     <xacro:include filename="$(find dr100)/urdf/dr100_imu.xacro" />
     <xacro:imu sensor_name="imu" parent_link="base_link">
-        <origin xyz="0.25 0 0.5355" rpy="0 0 0"/>
+        <origin xyz="0.265 0 0.5355" rpy="0 0 0"/>
     </xacro:imu>
 
     <!-- LiDAR -->
     <xacro:include filename="$(find dr100)/urdf/dr100_lidar.xacro"/>
     <xacro:robosense name="robosense" parent_link="base_link">
-        <origin xyz="0.2500 0 0.5725" rpy="0 0 0" />
+        <origin xyz="0.265 0 0.5725" rpy="0 0 0" />
     </xacro:robosense>
 </robot>

@@ -1,0 +1,4 @@
+# Map /dev/ttyS0 to /dev/dr100_chassis with 0660 permissions
+# Must add user to dialout group
+# sudo usermod -aG dialout $USER
+SUBSYSTEM=="tty", KERNEL=="ttyS0", SYMLINK+="dr100_chassis", MODE:="0660", GROUP:="dialout"

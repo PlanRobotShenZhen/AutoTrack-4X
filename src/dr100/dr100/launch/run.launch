@@ -1,17 +1,18 @@
 <launch>
     <!--- Sim Time -->
-    <param name="/use_sim_time" value="true" />
+    <param name="/use_sim_time" value="false" />
 
-    <arg name = "model_xacro" default = "$(find dr100)/urdf/dr100.gazebo.xacro" />
-    <param name="robot_description" command="$(find xacro)/xacro $(arg model_xacro)" />
-    
-    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-        <param name="use_gui" value="false"/>
+    <!-- IMU -->
+    <include file="$(find witmotion_ros)/launch/witmotion.launch" />
+
+    <!-- rslidar 16 -->
+    <node pkg="rslidar_sdk" name="rslidar_sdk_node" type="rslidar_sdk_node" output="screen">
+        <param name="config_path" value="$(find dr100)/config/rslidar_16.yaml"/>
     </node>
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-    <include file="$(find gazebo_ros)/launch/empty_world.launch"> 
-        <arg name="world_name" value="$(find dr100)/worlds/nano_demo.world" /> 
-    </include>
-    <node pkg="gazebo_ros" type="spawn_model" name="model" args="-urdf -model dr100 -param robot_description"  />  
+    <!-- description -->
+    <include file="$(find dr100)/launch/description.launch" />
+
+    <include file="$(find dr100_chassis_driver)/launch/chassis_controller.launch" />
+
 </launch>

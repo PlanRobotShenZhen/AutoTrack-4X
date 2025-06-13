@@ -3,7 +3,7 @@
   <!-- params -->
   <arg name="slam_type" default="3D-SLAM" />
   <arg name="tf_prefix" default="" />
-  <arg name="map_type" default="lio" />
+  <arg name="map_type" default="lego" />
 
   <!-- TF转换超时参数 -->
   <param name="/tf_timeout" value="1.0" />

@@ -20,14 +20,14 @@
 <launch>
     <node pkg="pcd2pgm" name="pcd2pgm" type="pcd2pgm" output="screen">
         <!-- 存放pcd文件的路径-->
-        <param name="file_directory" value= "$(find pcd2pgm)/pcd_map/" />
+        <param name="file_directory" value= "/home/plan/catkin_ws/maps/pcd_map/" />
         <!-- pcd文件名称-->
         <param name="file_name" value= "finalCloud" />
 
         <!-- 选取的范围　最小的高度-->
-        <param name="thre_z_min" value= "-0.4" />
+        <param name="thre_z_min" value= "-0.0" />
         <!-- 选取的范围　最大的高度-->
-        <param name="thre_z_max" value= "10.0" />
+        <param name="thre_z_max" value= "2.0" />
         <!--0 选取高度范围内的，１选取高度范围外的-->
         <param name="flag_pass_through" value= "0" />
 
@@ -35,13 +35,13 @@
         <!-- 半径滤波的半径-->
         <param name="thre_radius" value= "1" />
         <!-- 半径滤波的要求点数个数-->
-        <param name="thres_point_count" value= "3" />
+        <param name="thres_point_count" value= "10" />
 
         <!-- 统计学滤波-->
         <!-- 统计学滤波的半径-->
-        <param name="MeanK" value= "100" />
+        <param name="MeanK" value= "1" />
         <!-- 统计学滤波的要求点数个数-->
-        <param name="StddevMulThresh" value= "1.0" />
+        <param name="StddevMulThresh" value= "3" />
 
         <!-- 存储的栅格map的分辨率-->
         <param name="map_resolution" value= "0.05" />
@@ -51,7 +51,7 @@
         <!-- 滤波器开关参数 -->
         <param name="use_passthrough_filter" value= "true" />  <!-- 直通滤波, 根据高度范围过滤 -->
         <param name="use_radius_filter" value= "false" />    <!-- 半径滤波, 根据半径过滤 -->
-        <param name="use_statistical_filter" value= "false" /> <!-- 统计学滤波, 删除异常孤立点 -->
+        <param name="use_statistical_filter" value= "true" /> <!-- 统计学滤波, 删除异常孤立点 -->
     </node>
 
 </launch>

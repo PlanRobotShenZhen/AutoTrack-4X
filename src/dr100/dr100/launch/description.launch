@@ -1,0 +1,12 @@
+<launch>
+    <!--- Sim Time -->
+    <param name="/use_sim_time" value="false" />
+
+    <arg name = "model_xacro" default = "$(find dr100)/urdf/dr100.xacro" />
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model_xacro)" />
+    
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <param name="use_gui" value="false"/>
+    </node>
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+</launch>

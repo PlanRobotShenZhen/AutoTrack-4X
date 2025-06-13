@@ -5,19 +5,20 @@
 - Ubuntu 20.04
 - ROS Noetic Ninjemys
 
-## 仿真导航
+## 仿真环境导航
 
 ### 建图
 
-#### 方式一: SC-LeGO-LOAM
+启动仿真环境，并录制bag包
 
 ```bash
-roslaunch dr100 run.launch   # 启动仿真环境
-# rosrun rs_to_velodyne rs_to_velodyne XYZI XYZIR    # rs点云转velodyne点云（可选）。
-# 仿真包已去除NAN，新版驱动也可以设置dense_points为true
+roslaunch dr100 gazebo.launch   # 启动仿真环境
+# rosrun rs_to_velodyne rs_to_velodyne XYZI XYZIR    # rs点云转velodyne点云（可选）。 注：雷达仿真包已去除NAN
 rosrun rqt_robot_steering rqt_robot_steering    # 控制
 rosbag record /rslidar_points /velodyne_points /tf /tf_static /imu/data   # 录bag
 ```
+
+#### 方式一：SC-LeGO-LOAM
 
 ```bash
 roslaunch lego_loam run.launch  # 建图
@@ -26,18 +27,20 @@ rosbag play .bag --clock
 
 结束后自动保存到`~/catkin_ws/maps/LeGO-LOAM`，目录下
 
-#### 方式二: LIO-SAM
+#### 方式二：LIO-SAM
 
 ```bash
-roslaunch dr100 run.launch   # 启动仿真环境
 roslaunch lio_sam run.launch  # 建图
+rosbag play .bag --clock
 ```
 
 结束后自动保存到`~/catkin_ws/maps/LIO-SAM`，目录下
 
+注: 建图后可使用`pcl_viewer <file>`查看pcd文件
+
 ### 生成代价地图
 
-#### 方式一: pcd2pgm (推荐)
+#### 方式一：pcd2pgm (推荐)
 
 ```bash
 roslaunch pcd2pgm run.launch
@@ -65,7 +68,7 @@ rosrun map_server map_saver -f finalCloud  # 不要加.pgm
         StddevMulThresh=1.0（标准差乘数阈值）
     效果：有效去噪，适合复杂场景，但计算量较大。
 
-4. 参数: 
+4. 参数：
     - **file_directory**: 存放pcd文件的路径，默认为 `$(find pcd2pgm)/pcd_map/`
     - **file_name**: pcd文件名称，默认为 `finalCloud`
     - **thre_z_min**: 选取的范围最小高度
@@ -81,7 +84,7 @@ rosrun map_server map_saver -f finalCloud  # 不要加.pgm
     - **use_radius_filter**: 半径滤波开关
     - **use_statistical_filter**: 统计学滤波开关
 
-#### 方式二: octomap
+#### 方式二：octomap
 
 ```bash
 # pcd -> bt
@@ -94,21 +97,66 @@ rosrun map_server map_saver -f <Path>/finalCloud  # 不要加.pgm
 
 ### 导航
 
-生成后的代价地图(*.pgm)可能要用GIMP将障碍物的点连接起来
+生成后的代价地图(*.pgm)或需要用GIMP将障碍物的离散点连接成线条
 
-配置参数可参考: [ROS::导航参数配置详解](https://blog.csdn.net/weixin_43928944/article/details/119571534)
-`rosrun rqt_reconfigure rqt_reconfigure`可动态调整
+然后将对应地图替换到相应位置：
+
+- 对于LeGO-LOAM：`~/catkin_ws/src/bot_navigation/map/3d/lego/`
+- 对于LIO-SAM：`~/catkin_ws/src/bot_navigation/map/3d/lio/`
+
+可配置`~/catkin_ws/src/bot_navigation/param/3d`目录下的导航规划器参数
+
+具体可参考：[ROS::导航参数配置详解](https://blog.csdn.net/weixin_43928944/article/details/119571534)，`rosrun rqt_reconfigure rqt_reconfigure`可动态调整
 
 ```bash
-roslaunch dr100 run.launch   # 启动仿真环境
+roslaunch dr100 gazebo.launch   # 启动仿真环境
+# roslaunch dr100 run.launch   # 启动真实环境下的小车驱动与描述
+
 # roslaunch bot_navigation localization.launch # 测试定位
+
+# 启动导航
 roslaunch bot_navigation navigation.launch  # 导航
 roslaunch bot_navigation rviz.launch  # rivz, 在里面设置goal
 ```
 
-如果pointcloud_to_laserscan未安装则需要安装: `sudo apt-get install -y ros-noetic-pointcloud-to-laserscan`
+如果pointcloud_to_laserscan未安装则需要安装：`sudo apt-get install -y ros-noetic-pointcloud-to-laserscan`
 
-如果teb_local_planner未安装则需要安装: `sudo apt-get install -y ros-noetic-teb-local-planner`
+如果teb_local_planner未安装则需要安装：`sudo apt-get install -y ros-noetic-teb-local-planner`
+
+## 真实环境导航
+
+**确保已连接以下模块：**
+
+- IMU
+- RS-LiDAR-16
+- DR100 小车底盘
+
+### 建图
+
+启动真实环境下的小车驱动与描述，并录制bag
+
+```bash
+roslaunch dr100 run.launch   # 启动真实环境下的小车驱动与描述
+# rosrun rs_to_velodyne rs_to_velodyne XYZI XYZIR    # rs点云转velodyne点云（可选）。 注: 雷达新版驱动需要设置dense_points为true，去除NAN点
+rosbag record /rslidar_points /velodyne_points /tf /tf_static /imu/data   # 录bag
+```
+
+#### 方式一：SC-LeGO-LOAM
+
+参考 [仿真环境导航->建图->SC-LeGO-LOAM](####方式一：SC-LeGO-LOAM)
+
+#### 方式二：LIO-SAM
+
+参考 [仿真环境导航->建图->LIO-SAM](####方式二：LIO-SAM)
+
+### 生成代价地图
+
+参考 [仿真环境导航->生成代价地图](###生成代价地图)
+
+### 导航
+
+参考 [仿真环境导航->导航](###导航)
+
 
 ## 常用命令
 
@@ -131,7 +179,8 @@ roslaunch bot_navigation rviz.launch  # rivz, 在里面设置goal
 
   - 生成tf_tree的frames.gv和frames.pdf: `rosrun tf view_frames`
 
-
+  - git浅拷贝: `git clone --depth 1 --single-branch --branch <branch_name> <url>`
+ 
 ## FAQ
 
 1. WSL仿真卡顿，无法调用GPU
@@ -219,7 +268,7 @@ roslaunch bot_navigation rviz.launch  # rivz, 在里面设置goal
 13. pcl的问题: pcl的问题主要是需要 C++14的编译
   > CMakeLists.txt: `set(CMAKE_CXX_FLAGS "-std=c++14")`
 
-14. opencv的问题: `error: ‘class std::unordered_map<unsigned int, std::vector >’ has no member named ‘serialize’`
+14. opencv的问题: `error: 'class std::unordered_map<unsigned int, std::vector >' has no member named 'serialize'`
   > 原因：PCl库依赖的flann与Opencv冲突。opencv头文件中的一些宏定义和flann库中的冲突
     解决: `在utility.h`中, 保证pcl库中依赖的flann在opencv头文件之前先包含进去, 即把opencv的头文件放在PCL库之后就解决了
 
