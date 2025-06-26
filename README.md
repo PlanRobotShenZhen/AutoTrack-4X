@@ -1,4 +1,8 @@
-# DR100 室外导航车
+# 室外无人驾驶SLAM机器人
+
+## 许可证
+
+本项目采用 [BSD 3-Clause] 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。本许可证适用于本项目的所有历史版本。
 
 ## 环境
 
@@ -161,7 +165,7 @@ rosbag record /rslidar_points /velodyne_points /tf /tf_static /imu/data   # 录b
 ## 常用命令
 
   - 查看topic的frame_id
-    
+
     ```bash
     rostopic echo  </Topic>    | grep   frame_id
     # 激光雷达数据:
@@ -180,13 +184,13 @@ rosbag record /rslidar_points /velodyne_points /tf /tf_static /imu/data   # 录b
   - 生成tf_tree的frames.gv和frames.pdf: `rosrun tf view_frames`
 
   - git浅拷贝: `git clone --depth 1 --single-branch --branch <branch_name> <url>`
- 
+
 ## FAQ
 
 1. WSL仿真卡顿，无法调用GPU
 
-  > [Github issue](https://github.com/gazebosim/gz-sim/issues/2595#issuecomment-2337682562) 
-  >  
+  > [Github issue](https://github.com/gazebosim/gz-sim/issues/2595#issuecomment-2337682562)
+  >
   > 确保Ubuntu20.04, `export MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA` 与 `export LIBGL_ALWAYS_SOFTWARE=false`
 
 2. gtsam推荐使用v4.1.0, [gtsam](https://gtsam.org/get_started/)
@@ -198,19 +202,19 @@ rosbag record /rslidar_points /velodyne_points /tf /tf_static /imu/data   # 录b
 4. rs_to_velodyne 编译报错的问题
 
   > [Github issue](https://github.com/HViktorTsoi/rs_to_velodyne/issues/13)
-  > 
+  >
   > (1) C++版本太低，改成 `set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O3")`
   > (2) `pcl_isnan()`已弃用, 替换为 `std::isnan()`, 且添加头文件`#include <cmath>`
 
 5. 仿真包robosense_simulator发布的点云存在NAN点
 
   > 修改`GazeboRosRoboSenseLaser.cpp`，加上`#include <cmath>`头文件
-  > 
+  >
   > 将`if ((MIN_RANGE >= r) || (r >= MAX_RANGE) || (intensity < MIN_INTENSITY) ) `这个判断改成
   > ```c++
   > // 检查是否为NAN点，以及其他范围检查
-  > if (std::isnan(r) || std::isnan(intensity) || 
-  >     (MIN_RANGE >= r) || (r >= MAX_RANGE) || 
+  > if (std::isnan(r) || std::isnan(intensity) ||
+  >     (MIN_RANGE >= r) || (r >= MAX_RANGE) ||
   >     (intensity < MIN_INTENSITY)) {
   >     continue;
   > }
@@ -228,9 +232,9 @@ rosbag record /rslidar_points /velodyne_points /tf /tf_static /imu/data   # 录b
 8. LIO-SAM/LeGO-LOAM的警告
 
   > 将所有的 uint8_t, uint16_t, uint32_t 替换为: std::uint8_t, std::uint16_t, std::uint32_t
-  > 
+  >
   > 对于 unused 变量的警告, `[[maybe_unused]] float <变量> = xxx`
-  > 
+  >
 
 9. LIO-SAM参数
 
@@ -251,7 +255,7 @@ rosbag record /rslidar_points /velodyne_points /tf /tf_static /imu/data   # 录b
 11. LIO-SAM 运行时报 `Warning: TF_REPEATED_DATA ignoring data with redundant timestamp for frame`
 
   > gazebo仿真中的控制已经发布了`base_link`到`odom`的TF变换，但是SLAM节点又发布了一次导致冲突
-  > 
+  >
   > gazebo不发布或者变更LIO-SAM参数:
   > ```yaml
   >     # Frames
@@ -278,3 +282,29 @@ rosbag record /rslidar_points /velodyne_points /tf /tf_static /imu/data   # 录b
     改为
     `#include<opencv2/imgproc.hpp>`
 
+
+## Cite
+
+[LIO-SAM (IROS-2020)](https://github.com/TixiaoShan/LIO-SAM)
+```
+@inproceedings{liosam2020shan,
+  title={LIO-SAM: Tightly-coupled Lidar Inertial Odometry via Smoothing and Mapping},
+  author={Shan, Tixiao and Englot, Brendan and Meyers, Drew and Wang, Wei and Ratti, Carlo and Rus Daniela},
+  booktitle={IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  pages={5135-5142},
+  year={2020},
+  organization={IEEE}
+}
+```
+
+[LeGO-LOAM](https://github.com/RobustFieldAutonomyLab/LeGO-LOAM)
+```
+@inproceedings{legoloam2018shan,
+  title={LeGO-LOAM: Lightweight and Ground-Optimized Lidar Odometry and Mapping on Variable Terrain},
+  author={Shan, Tixiao and Englot, Brendan},
+  booktitle={IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  pages={4758-4765},
+  year={2018},
+  organization={IEEE}
+}
+```
