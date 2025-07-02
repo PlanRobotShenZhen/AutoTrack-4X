@@ -1,4 +1,12 @@
-# Outdoor Autonomous SLAM Robot
+# AutoTrack-4X
+
+## Introduction
+
+AutoTrack-4X is a navigation suite platform designed for autonomous mobile tasks in complex environments. It integrates a high-precision SLAM (Simultaneous Localization and Mapping) system with intelligent navigation algorithms, delivering outstanding capabilities in environmental perception, autonomous positioning, path planning, and dynamic obstacle avoidance.
+
+The platform features a four-wheel independent differential drive design, enabling superior maneuverability such as in-place rotation and omnidirectional movement. It is suitable for a variety of scenarios, including warehouse logistics, outdoor inspection, agricultural operations, and scientific research validation.
+
+With its modular design, the system supports the integration of multiple sensors such as LiDAR, depth cameras, IMU, and RTK, facilitating secondary development and functional expansion for users.
 
 ## License
 
