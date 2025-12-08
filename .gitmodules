@@ -1,0 +1,9 @@
+[submodule "gps_umd"]
+	path = gps_umd
+	url = ./gps_umd
+[submodule "src/gps_umd"]
+	path = src/gps_umd
+	url = ./src/gps_umd
+[submodule "src/nmea_navsat_driver"]
+	path = src/nmea_navsat_driver
+	url = ./src/nmea_navsat_driver
