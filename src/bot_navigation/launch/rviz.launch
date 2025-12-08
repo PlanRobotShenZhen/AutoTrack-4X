@@ -1,4 +1,0 @@
-<launch>
-    <!-- 启动 rviz -->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find bot_navigation)/config/3d/rviz.rviz" />
-</launch>
