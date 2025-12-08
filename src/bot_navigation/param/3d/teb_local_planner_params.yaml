@@ -10,35 +10,35 @@ TebLocalPlannerROS:
   teb_autosize: True             # 是否自动调整轨迹大小
   dt_ref: 0.3                    # 轨迹时间分辨率参考值(秒)
   dt_hysteresis: 0.1             # 轨迹时间分辨率滞后值，用于自动调整大小
-  global_plan_overwrite_orientation: True  # 是否覆盖全局规划器提供的局部子目标的方向
+  global_plan_overwrite_orientation: true  # 是否覆盖全局规划器提供的局部子目标的方向
   max_global_plan_lookahead_dist: 2.0     # 考虑优化的全局计划子集的最大长度(米)
-  feasibility_check_no_poses: 3           # 每个采样间隔内检查可行性的姿态数量
+  feasibility_check_no_poses: 10           # 每个采样间隔内检查可行性的姿态数量
 
   # Robot（机器人运动参数）
-  max_vel_x: 0.03                 # 最大前向速度(米/秒)
+  max_vel_x: 0.1                 # 最大前向速度(米/秒)
   max_vel_y: 0.0                 # 最大横向速度，非全向移动机器人设为0
-  max_vel_x_backwards: 0.01       # 最大后退速度(米/秒)
-  max_vel_theta: 0.05             # 最大角速度(弧度/秒)
-  acc_lim_x: 0.005                 # 最大前向加速度(米/秒^2)
+  max_vel_x_backwards: 0.005       # 最大后退速度(米/秒)
+  max_vel_theta: 0.1             # 最大角速度(弧度/秒)
+  acc_lim_x: 0.01                 # 最大前向加速度(米/秒^2)
   acc_lim_y: 0.0                 # 最大横向加速度，非全向移动机器人设为0
-  acc_lim_theta: 0.005             # 最大角加速度(弧度/秒^2)
+  acc_lim_theta: 0.01             # 最大角加速度(弧度/秒^2)
   min_turning_radius: 0.0        # 最小转弯半径，0表示可原地旋转
   wheelbase: 0.648               # 轴距，前后轮轴之间的距离(米)
   cmd_angle_instead_rotvel: false # 是否使用转向角代替旋转速度
 
   # GoalTolerance（目标容差参数）
   xy_goal_tolerance: 0.3         # 到达目标位置的欧氏距离容差(米)
-  yaw_goal_tolerance: 0.1        # 到达目标姿态的角度容差(弧度)
+  yaw_goal_tolerance: 0.3        # 到达目标姿态的角度容差(弧度)
   free_goal_vel: False           # 是否允许机器人以最大速度到达目标点
 
   # Obstacles（障碍物相关参数）
-  min_obstacle_dist: 0.15                      # 与障碍物的最小距离(米)
+  min_obstacle_dist: 0.2                      # 与障碍物的最小距离(米)
   include_costmap_obstacles: True             # 是否考虑代价地图中的障碍物
   costmap_obstacles_behind_robot_dist: 1    # 考虑机器人后方多远的障碍物(米)
-  obstacle_poses_affected: 30                 # 每个障碍物影响的轨迹姿态数量
+  obstacle_poses_affected: 25                 # 每个障碍物影响的轨迹姿态数量
   costmap_converter_plugin: ""                # 代价地图转换插件名称
   costmap_converter_spin_thread: True         # 是否在单独线程中运行代价地图转换
-  costmap_converter_rate: 5                   # 代价地图转换频率(Hz)
+  costmap_converter_rate: 10                   # 代价地图转换频率(Hz)
 
   # Optimization（优化相关参数）
   no_inner_iterations: 5                      # 每次外循环中的实际求解器迭代次数
@@ -53,9 +53,9 @@ TebLocalPlannerROS:
   weight_kinematics_nh: 1000                 # 满足非完整运动学的优化权重
   weight_kinematics_forward_drive: 1000      # 促使机器人选择前向运动的优化权重
   weight_kinematics_turning_radius: 1        # 强制最小转弯半径的优化权重
-  weight_optimaltime: 1                      # 优化轨迹执行时间的权重
-  weight_obstacle: 50                        # 保持与障碍物最小距离的优化权重
-  weight_dynamic_obstacle: 10                # 动态障碍物的优化权重
+  weight_optimaltime: 2                      # 优化轨迹执行时间的权重
+  weight_obstacle: 150                        # 保持与障碍物最小距离的优化权重
+  weight_dynamic_obstacle: 300                # 动态障碍物的优化权重
   selection_alternative_time_cost: False     # 是否使用替代时间开销计算方法
 
   # Homotopy Class Planner（同伦类规划器参数）

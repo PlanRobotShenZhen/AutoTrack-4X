@@ -37,6 +37,9 @@
  *********************************************************************/
 #include<global_planner/dijkstra.h>
 #include <algorithm>
+#include <queue>
+#include <cmath>
+
 namespace global_planner {
 
 DijkstraExpansion::DijkstraExpansion(PotentialCalculator* p_calc, int nx, int ny) :
@@ -47,6 +50,10 @@ DijkstraExpansion::DijkstraExpansion(PotentialCalculator* p_calc, int nx, int ny
     buffer3_ = new int[PRIORITYBUFSIZE];
 
     priorityIncrement_ = 2 * neutral_cost_;
+    
+    // 初始化懒狗策略参数
+    lazy_mode_ = true;
+    stability_threshold_ = 0.3f;
 }
 
 DijkstraExpansion::~DijkstraExpansion() {
@@ -67,6 +74,149 @@ void DijkstraExpansion::setSize(int xs, int ys) {
 
     pending_ = new bool[ns_];
     memset(pending_, 0, ns_ * sizeof(bool));
+}
+
+//
+// 路径平滑函数 - 使用简单的样条插值
+//
+void DijkstraExpansion::smoothPath(std::vector<std::pair<float, float>>& path, unsigned char* costs) {
+    if (path.size() < 3) return;
+    
+    std::vector<std::pair<float, float>> smoothed_path;
+    smoothed_path.push_back(path[0]);
+    
+    for (size_t i = 1; i < path.size() - 1; i++) {
+        // 简单的平均平滑
+        float x = (path[i-1].first + path[i].first + path[i+1].first) / 3.0f;
+        float y = (path[i-1].second + path[i].second + path[i+1].second) / 3.0f;
+        
+        // 检查平滑后的点是否在可通行区域
+        int index = toIndex(x, y);
+        if (index >= 0 && index < ns_ && getCost(costs, index) < lethal_cost_) {
+            smoothed_path.push_back(std::make_pair(x, y));
+        } else {
+            smoothed_path.push_back(path[i]);
+        }
+    }
+    
+    smoothed_path.push_back(path.back());
+    path = smoothed_path;
+}
+
+//
+// 检查两点之间直线是否畅通
+//
+bool DijkstraExpansion::isStraightLineClear(int x1, int y1, int x2, int y2, unsigned char* costs) {
+    // Bresenham直线算法检查路径上的所有点
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    int err = dx - dy;
+    
+    while (true) {
+        // 检查当前点是否可通行
+        int index = toIndex(x1, y1);
+        if (index < 0 || index >= ns_ || getCost(costs, index) >= lethal_cost_) {
+            return false;
+        }
+        
+        if (x1 == x2 && y1 == y2) break;
+        
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y1 += sy;
+        }
+    }
+    
+    return true;
+}
+
+//
+// 路径简化 - 去除不必要的中间点
+//
+void DijkstraExpansion::simplifyPath(std::vector<std::pair<float, float>>& path, unsigned char* costs) {
+    if (path.size() < 3) return;
+    
+    std::vector<std::pair<float, float>> simplified_path;
+    simplified_path.push_back(path[0]);
+    
+    size_t i = 0;
+    while (i < path.size() - 1) {
+        size_t j = path.size() - 1;
+        // 从最远点开始找，看是否能直线连接
+        while (j > i + 1) {
+            int x1 = static_cast<int>(path[i].first);
+            int y1 = static_cast<int>(path[i].second);
+            int x2 = static_cast<int>(path[j].first);
+            int y2 = static_cast<int>(path[j].second);
+            
+            if (isStraightLineClear(x1, y1, x2, y2, costs)) {
+                simplified_path.push_back(path[j]);
+                i = j;
+                break;
+            }
+            j--;
+        }
+        
+        if (j == i + 1) {
+            simplified_path.push_back(path[i + 1]);
+            i++;
+        }
+    }
+    
+    path = simplified_path;
+}
+
+//
+// 懒狗策略：检查是否需要重新规划
+//
+bool DijkstraExpansion::shouldReplan(const std::vector<std::pair<float, float>>& old_path, 
+                                   unsigned char* new_costs, float threshold) {
+    if (!lazy_mode_ || old_path.empty()) return true;
+    
+    float stability = calculatePathStability(old_path, new_costs);
+    return stability < threshold;
+}
+
+//
+// 计算路径稳定性
+//
+float DijkstraExpansion::calculatePathStability(const std::vector<std::pair<float, float>>& path, 
+                                              unsigned char* costs) {
+    if (path.empty()) return 0.0f;
+    
+    int safe_cells = 0;
+    int total_cells = 0;
+    
+    // 检查路径周围区域的稳定性
+    for (const auto& point : path) {
+        int x = static_cast<int>(point.first);
+        int y = static_cast<int>(point.second);
+        
+        // 检查3x3邻域
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                int nx = x + dx;
+                int ny = y + dy;
+                
+                if (nx >= 0 && nx < nx_ && ny >= 0 && ny < ny_) {
+                    int index = toIndex(nx, ny);
+                    total_cells++;
+                    if (getCost(costs, index) < lethal_cost_ * 0.7f) { // 70%的障碍物阈值
+                        safe_cells++;
+                    }
+                }
+            }
+        }
+    }
+    
+    return total_cells > 0 ? static_cast<float>(safe_cells) / total_cells : 0.0f;
 }
 
 //

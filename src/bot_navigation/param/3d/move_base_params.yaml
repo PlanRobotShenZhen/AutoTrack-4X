@@ -1,24 +1,22 @@
-# 规划器配置
-base_global_planner: "global_planner/GlobalPlanner"    # 全局规划器类型
-base_local_planner: "teb_local_planner/TebLocalPlannerROS"  # 局部规划器类型
+base_global_planner: "global_planner/GlobalPlanner"  # 全局路径规划器插件
+base_local_planner: "teb_local_planner/TebLocalPlannerROS"  # 局部路径规划器插件（TEB算法）
 
-# 恢复行为配置
-recovery_behaviors:
-  - name: 'conservative_reset'                         # 保守重置
-    type: 'clear_costmap_recovery/ClearCostmapRecovery'
-  - name: 'aggressive_reset'                          # 激进重置
-    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+recovery_behaviors:  # 恢复行为配置列表（当机器人卡住时的应对策略）
+  - {name: conservative_reset, type: clear_costmap_recovery/ClearCostmapRecovery}  # 保守重置：清除代价地图
+  - {name: aggressive_reset, type: clear_costmap_recovery/ClearCostmapRecovery}   # 激进重置：清除代价地图（更彻底）
 
-# 规划器容差
-planner_frequency: 1.0            # 全局规划器执行频率(Hz)
-planner_patience: 5.0             # 规划器等待规划的最长时间(秒)
-oscillation_timeout: 10.0         # 振荡超时时间(秒)
-oscillation_distance: 0.2         # 判定为振荡的最小距离(米)
+planner_frequency: 0.0          # 全局规划器执行频率（Hz），0表示只在需要时执行
+controller_frequency: 10.0      # 局部控制器执行频率（Hz）
+planner_patience: 5             # 全局规划器等待有效路径的时间（秒）
+controller_patience: 15.0       # 局部控制器等待有效控制命令的时间（秒）
+recovery_behavior_enabled: true # 是否启用恢复行为
+clearing_rotation_allowed: true # 是否允许清理旋转（原地旋转）
+shutdown_costmaps: false        # 关闭时是否关闭代价地图
+oscillation_timeout: 0.0        # 振荡超时时间（秒），检测机器人是否在原地摆动
+oscillation_distance: 0.3       # 振荡检测距离（米），机器人移动小于此距离可能被判定为振荡
 
-# 控制器容差
-controller_frequency: 5.0         # 局部规划器执行频率(Hz)
-controller_patience: 5.0          # 控制器等待有效控制的最长时间(秒)
+conservative_reset:  # 保守重置恢复行为的具体配置
+  reset_distance: 1.0  # 重置距离（米），清除此距离内的代价地图
 
-# TF超时参数
-transform_tolerance: 1.0
-clearing_rotation_allowed: true
+aggressive_reset:    # 激进重置恢复行为的具体配置
+  reset_distance: 0.0  # 重置距离（米），0表示清除所有代价地图

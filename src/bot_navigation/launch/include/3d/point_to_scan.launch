@@ -13,13 +13,13 @@
             min_height: -0.40
             max_height: 1.0
 
-            angle_min: -2.5 # -3.1415926 # -M_PI
-            angle_max: 2.5  # 3.1415926 # M_PI
+            angle_min: -3.1415926 # -M_PI
+            angle_max: 3.1415926 # M_PI
             #angle_min: -1.57 # -3.1415926 # -M_PI
             #angle_max: 1.57  # 3.1415926 # M_PI
             angle_increment: 0.003 # 0.17degree
             scan_time: 0.1
-            range_min: 0.3
+            range_min: 0.2
             range_max: 100
             use_inf: true
             inf_epsilon: 1.0

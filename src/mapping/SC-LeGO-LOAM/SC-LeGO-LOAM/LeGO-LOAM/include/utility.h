@@ -59,7 +59,7 @@ extern const string pointCloudTopic = "/rslidar_points";
 extern const string imuTopic = "/imu/data1";
 
 // Save pcd
-extern const string fileDirectory = "/home/plan/catkin_ws/maps/LeGO-LOAM/";
+extern const string fileDirectory = "/home/pl/catkin_ws/maps/LeGO-LOAM/";
 
 // Using velodyne cloud "ring" channel for image projection (other lidar may have different name for this channel, change "PointXYZIR" below)
 extern const bool useCloudRing = false; // if true, ang_res_y and ang_bottom are not used. When using rs16, useCloudRing must be set to false.

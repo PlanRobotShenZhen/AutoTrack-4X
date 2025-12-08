@@ -14,5 +14,9 @@
     <include file="$(find dr100)/launch/description.launch" />
 
     <include file="$(find dr100_chassis_driver)/launch/chassis_controller.launch" />
+    
+    <include file="$(find rs_to_velodyne)/launch/vl.launch" />
+    
+    <!-- node pkg="tf" type="static_transform_publisher" name="tf_odom" args="0 0 0 0 0 0  map base_link 100"/ -->
 
 </launch>

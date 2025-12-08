@@ -9,6 +9,8 @@
         <param name="use_gui" value="false"/>
     </node>
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    
+    <include file="$(find rs_to_velodyne)/launch/vl.launch" />
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch"> 
         <arg name="world_name" value="$(find dr100)/worlds/nano_demo.world" /> 

@@ -20,7 +20,7 @@
 <launch>
     <node pkg="pcd2pgm" name="pcd2pgm" type="pcd2pgm" output="screen">
         <!-- 存放pcd文件的路径-->
-        <param name="file_directory" value= "/home/plan/catkin_ws/maps/pcd_map/" />
+        <param name="file_directory" value= "/home/pl/catkin_ws/maps/LeGO-LOAM/" />
         <!-- pcd文件名称-->
         <param name="file_name" value= "finalCloud" />
 

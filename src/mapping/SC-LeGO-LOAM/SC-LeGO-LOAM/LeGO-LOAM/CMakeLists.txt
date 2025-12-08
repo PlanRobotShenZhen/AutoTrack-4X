@@ -25,6 +25,7 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 find_package(GTSAM REQUIRED QUIET)
 find_package(PCL REQUIRED QUIET)
 find_package(OpenCV REQUIRED QUIET)
+find_package(Boost REQUIRED COMPONENTS timer thread serialization chrono)
 
 catkin_package(
   INCLUDE_DIRS include

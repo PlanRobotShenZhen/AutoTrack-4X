@@ -1,40 +1,3 @@
-/*********************************************************************
- *
- * Software License Agreement (BSD License)
- *
- *  Copyright (c) 2008, 2013, Willow Garage, Inc.
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *   * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   * Neither the name of Willow Garage, Inc. nor the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- *  POSSIBILITY OF SUCH DAMAGE.
- *
- * Author: Eitan Marder-Eppstein
- *         David V. Lu!!
- *********************************************************************/
 #ifndef _DIJKSTRA_H
 #define _DIJKSTRA_H
 
@@ -43,6 +6,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <vector>
+#include <algorithm>
 
 #include <global_planner/planner_core.h>
 #include <global_planner/expander.h>
@@ -59,6 +24,17 @@ class DijkstraExpansion : public Expander {
         virtual ~DijkstraExpansion();
         bool calculatePotentials(unsigned char* costs, double start_x, double start_y, double end_x, double end_y, int cycles,
                                 float* potential);
+        
+        // 新增方法：路径平滑和后处理
+        void smoothPath(std::vector<std::pair<float, float>>& path, unsigned char* costs);
+        bool isStraightLineClear(int x1, int y1, int x2, int y2, unsigned char* costs);
+        void simplifyPath(std::vector<std::pair<float, float>>& path, unsigned char* costs);
+        
+        // 懒狗策略相关方法
+        bool shouldReplan(const std::vector<std::pair<float, float>>& old_path, 
+                         unsigned char* new_costs, float threshold = 0.3);
+        float calculatePathStability(const std::vector<std::pair<float, float>>& path, 
+                                   unsigned char* costs);
 
         /**
          * @brief  Sets or resets the size of the map
@@ -73,8 +49,12 @@ class DijkstraExpansion : public Expander {
         }
 
         void setPreciseStart(bool precise){ precise_ = precise; }
+        
+        // 设置懒狗策略参数
+        void setLazyMode(bool lazy) { lazy_mode_ = lazy; }
+        void setStabilityThreshold(float threshold) { stability_threshold_ = threshold; }
+        
     private:
-
         /**
          * @brief  Updates the cell at index n
          * @param costs The costmap
@@ -100,6 +80,10 @@ class DijkstraExpansion : public Expander {
         int currentEnd_, nextEnd_, overEnd_; /**< end points of arrays */
         bool *pending_; /**< pending_ cells during propagation */
         bool precise_;
+        
+        // 懒狗策略参数
+        bool lazy_mode_;
+        float stability_threshold_;
 
         /** block priority thresholds */
         float threshold_; /**< current threshold */
