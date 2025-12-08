@@ -1,0 +1,9 @@
+[submodule "abseil-cpp"]
+	path = abseil-cpp
+	url = ./abseil-cpp
+[submodule "src/cartographer"]
+	path = src/cartographer
+	url = ./src/cartographer
+[submodule "src/cartographer_ros"]
+	path = src/cartographer_ros
+	url = ./src/cartographer_ros
