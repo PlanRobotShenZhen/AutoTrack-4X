@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="dr100_wheel">
+
+    <!-- Wheel Macro -->
+    <xacro:macro name="dr100_wheel" params="wheel_prefix *joint_pose">
+        <link name="${wheel_prefix}_wheel_link">
+            <inertial>
+                <mass value="${wheel_mass}" />
+                <origin xyz="0 0 0" />
+                <inertia ixx="0.019" ixy="0" ixz="0" iyy="0.032" iyz="0" izz="0.019" />
+            </inertial>
+            <visual>
+                <origin xyz="${-wheel_radius} ${-wheel_length/2} ${-wheel_radius}" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://dr100/meshes/wheel.STL" />
+                </geometry>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+                <geometry>
+                    <cylinder length="${wheel_length}" radius="${wheel_radius}" />
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${wheel_prefix}_wheel" type="continuous">
+            <parent link="base_link"/>
+            <child link="${wheel_prefix}_wheel_link"/>
+            <xacro:insert_block name="joint_pose"/>
+            <axis xyz="0 1 0" rpy="0 0 0" />
+        </joint>
+    </xacro:macro>
+
+    <!-- Chassis wheels -->
+    <xacro:dr100_wheel wheel_prefix="front_right">
+        <origin xyz="${wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+    </xacro:dr100_wheel>
+    <xacro:dr100_wheel wheel_prefix="front_left">
+        <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+    </xacro:dr100_wheel>
+    <xacro:dr100_wheel wheel_prefix="rear_left">
+        <origin xyz="${-wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+    </xacro:dr100_wheel>
+    <xacro:dr100_wheel wheel_prefix="rear_right">
+        <origin xyz="${-wheelbase/2} ${-track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
+    </xacro:dr100_wheel>
+
+</robot>

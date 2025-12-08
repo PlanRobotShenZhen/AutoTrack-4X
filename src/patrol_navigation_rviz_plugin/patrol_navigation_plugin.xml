@@ -1,0 +1,18 @@
+<library path="libpatrol_navigation_rviz_plugin">
+  <class name="patrol_navigation_rviz_plugin/PatrolNavigationPanel"
+         type="patrol_navigation_rviz_plugin::PatrolNavigationPanel"
+         base_class_type="rviz::Panel">
+    <description>
+      A RViz panel for multi-point patrol navigation with features for 
+      path management, cyclic inspection, and real-time status monitoring.
+    </description>
+  </class>
+  
+  <class name="patrol_navigation_rviz_plugin/PatrolPointTool"
+         type="patrol_navigation_rviz_plugin::PatrolPointTool"
+         base_class_type="rviz::Tool">
+    <description>
+      A tool for setting patrol points by clicking on the map.
+    </description>
+  </class>
+</library>

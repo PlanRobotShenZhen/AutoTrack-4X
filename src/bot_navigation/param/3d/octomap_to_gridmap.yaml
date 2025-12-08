@@ -1,0 +1,35 @@
+# octomap_to_gridmap_demo模块的配置参数
+octomap_to_gridmap_demo:
+  # 订阅的octomap服务话题名称，用于获取二进制的octomap数据
+  octomap_service_topic: "/octomap_binary"
+  # 处理octomap时在Z轴方向上的最小高度值（单位：米）
+  min_z: -100
+  # 处理octomap时在Z轴方向上的最大高度值（单位：米）
+  max_z: 100.0
+
+# grid_map_visualization模块的配置参数
+grid_map_visualization:
+  # 要可视化的grid_map数据的话题名称
+  grid_map_topic: /octomap_to_gridmap_demo/grid_map
+  # 可视化配置列表，可以配置多种不同类型的可视化
+  grid_map_visualizations:
+    # 第一种可视化：点云显示
+    - name: elevation_points  # 可视化名称，用于标识
+      type: point_cloud       # 可视化类型：点云显示
+      params:
+        layer: elevation      # 使用grid_map中的"elevation"图层数据
+    
+    # 第二种可视化：占据栅格地图显示
+    - name: elevation_grid    # 可视化名称
+      type: occupancy_grid    # 可视化类型：占据栅格地图
+      params:
+        layer: elevation      # 使用grid_map中的"elevation"图层数据
+        data_min: -2.0        # 数据映射的最小值，低于此值将被视为无效或特定状态
+        data_max: 0.1         # 数据映射的最大值，高于此值将被视为无效或特定状态
+    
+    # 第三种可视化：地图区域边界显示
+    - name: map_region        # 可视化名称
+      type: map_region        # 可视化类型：地图区域边界
+      params:
+        color: 3289650        # 边界线颜色（RGB颜色值，这里是十进制表示的RGB颜色）
+        line_width: 0.1       # 边界线宽度（单位：米）

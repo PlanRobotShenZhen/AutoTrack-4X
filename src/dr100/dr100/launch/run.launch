@@ -1,0 +1,22 @@
+<launch>
+    <!--- Sim Time -->
+    <param name="/use_sim_time" value="false" />
+
+    <!-- IMU -->
+    <include file="$(find witmotion_ros)/launch/witmotion.launch" />
+
+    <!-- rslidar 16 -->
+    <node pkg="rslidar_sdk" name="rslidar_sdk_node" type="rslidar_sdk_node" output="screen">
+        <param name="config_path" value="$(find dr100)/config/rslidar_16.yaml"/>
+    </node>
+
+    <!-- description -->
+    <include file="$(find dr100)/launch/description.launch" />
+
+    <include file="$(find dr100_chassis_driver)/launch/chassis_controller.launch" />
+    
+    <include file="$(find rs_to_velodyne)/launch/vl.launch" />
+    
+    <!-- node pkg="tf" type="static_transform_publisher" name="tf_odom" args="0 0 0 0 0 0  map base_link 100"/ -->
+
+</launch>

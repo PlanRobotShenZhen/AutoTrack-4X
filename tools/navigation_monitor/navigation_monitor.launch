@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- 参数配置 -->
+    <arg name="serial_port" default="/dev/pts/6" />
+    <arg name="baud_rate" default="9600" />
+    <arg name="cmd_vel_topic" default="/cmd_vel" />
+    <arg name="linear_speed" default="0.01" />
+    <arg name="angular_speed" default="0.02" />
+
+    <!-- 导航监控器 -->
+    <node name="navigation_monitor" pkg="bot_navigation" type="navigation_monitor.py" output="screen">
+        <!-- 串口配置 -->
+        <param name="serial_port" value="$(arg serial_port)" />
+        <param name="baud_rate" value="$(arg baud_rate)" />
+
+        <!-- 控制话题和速度配置 -->
+        <param name="cmd_vel_topic" value="$(arg cmd_vel_topic)" />
+        <param name="linear_speed" value="$(arg linear_speed)" />
+        <param name="angular_speed" value="$(arg angular_speed)" />
+    </node>
+</launch>
