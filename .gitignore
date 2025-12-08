@@ -28,3 +28,4 @@ maps/pcd_map/
 Ros_Qt5_Gui_App/build/
 tools/ros_rqt_gui/*.log
 
+.git.backup/
