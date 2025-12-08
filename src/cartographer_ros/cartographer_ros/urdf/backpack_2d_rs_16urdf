@@ -1,0 +1,52 @@
+<!--
+  Copyright 2016 The Cartographer Authors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- 定义了一个名为cartographer_backpack_2d的机器人模型 -->  
+<robot name="cartographer_backpack_2d">  
+  
+  <!-- 定义了一个名为orange的材料，其颜色为橙红色 -->  
+  <material name="orange">  
+    <color rgba="1.0 0.5 0.2 1" /> <!-- RGBA颜色值分别为红、绿、蓝、透明度，这里为不透明橙红色 -->  
+  </material>  
+  
+  <!-- 定义了一个名为gray的材料，其颜色为深灰色 -->  
+  <material name="gray">  
+    <color rgba="0.2 0.2 0.2 1" /> <!-- RGBA颜色值分别为红、绿、蓝、透明度，这里为不透明深灰色 -->  
+  </material>  
+  
+  
+  <!-- 定义了一个名为rslidar的连杆，代表激光雷达 -->  
+  <link name="rslidar">  
+    <visual> <!-- 定义连杆的视觉属性 -->  
+      <origin xyz="0 0 0" /> <!-- 视觉属性的原点位于连杆的坐标原点 -->  
+      <geometry> <!-- 定义连杆的几何形状 -->  
+        <cylinder length="0.05" radius="0.03" /> <!-- 连杆形状为圆柱体，长度为0.05m, 半径为0.03m -->  
+      </geometry>  
+      <material name="gray" /> <!-- 使用前面定义的gray材料 -->  
+    </visual>  
+  </link>  
+  
+  <!-- 定义了一个名为base_link的连杆，通常作为机器人其他部分的父连杆 -->  
+  <link name="base_link" />  
+  
+  
+  <!-- 定义了一个名为laser_joint的关节，类型为固定关节，连接rslidar和base_link -->  
+  <joint name="laser_joint" type="fixed">  
+    <parent link="base_link" /> <!-- 父连杆为base_link -->  
+    <child link="rslidar" /> <!-- 子连杆为rslidar -->  
+    <origin xyz="0.1007 0 0.0558" /> <!-- 关节的原点相对于父连杆的位置，表示激光雷达在机器人上的安装位置 -->  
+  </joint>  
+  
+</robot>
